@@ -44,8 +44,8 @@ for i in $(seq ${KERNEL_SUBLEVEL} ${COMPAT_LATEST_VERSION}); do
 	echo "export CONFIG_COMPAT_KERNEL_3_${i}=y"
 done
 
-# The purpose of these seem to be the inverse of the above other varibales.
-# The RHEL checks seem to annotate the existance of RHEL minor versions.
+# The purpose of these seem to be the inverse of the above other variables.
+# The RHEL checks seem to annotate the existence of RHEL minor versions.
 RHEL_MAJOR=$(grep ^RHEL_MAJOR ${KLIB_BUILD}/Makefile | sed -n 's/.*= *\(.*\)/\1/p')
 if [[ ! -z ${RHEL_MAJOR} ]]; then
 	RHEL_MINOR=$(grep ^RHEL_MINOR ${KLIB_BUILD}/Makefile | sed -n 's/.*= *\(.*\)/\1/p')
@@ -68,7 +68,7 @@ if [[ ${CONFIG_COMPAT_KERNEL_3_5} = "y" ]]; then
 	# For those who want to try this is what is required that I can tell
 	# so far:
 	#  * struct Qdisc_ops
-	#	- init and change callback ops use a different argument dataype
+	#	- init and change callback ops use a different argument datatype
 	# 	- you need to parse data received from userspace differently
 	if [[ ${CONFIG_COMPAT_KERNEL_2_6_25} != "y" ]]; then
 		echo "export CONFIG_COMPAT_NET_SCH_CODEL=m"
