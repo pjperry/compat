@@ -99,7 +99,7 @@ struct pm_qos_request_list {
  * gcc's format and side-effect checking.
  */
 /* mask no_printk as RHEL6 backports this */
-#define no_printk(...) compat_no_printk(...)
+#define no_printk(a, ...) compat_no_printk(a, ##__VA_ARGS__)
 static inline __attribute__ ((format (printf, 1, 2)))
 int no_printk(const char *s, ...) { return 0; }
 

@@ -15,6 +15,7 @@
 #include <linux/firmware.h>
 #include <linux/input.h>
 
+#if defined(CONFIG_COMPAT_FIRMWARE_CLASS)
 #if defined(CONFIG_FW_LOADER) || defined(CONFIG_FW_LOADER_MODULE)
 #define release_firmware compat_release_firmware
 #define request_firmware compat_request_firmware
@@ -48,6 +49,7 @@ static inline int compat_request_firmware_nowait(
 static inline void compat_release_firmware(const struct firmware *fw)
 {
 }
+#endif
 #endif
 
 /* mask KEY_RFKILL as RHEL6 backports this */
@@ -172,6 +174,19 @@ static inline long __must_check IS_ERR_OR_NULL(const void *ptr)
 {
 	return !ptr || IS_ERR_VALUE((unsigned long)ptr);
 }
+
+#if (LINUX_VERSION_CODE == KERNEL_VERSION(2,6,32))
+#undef SIMPLE_DEV_PM_OPS
+#define SIMPLE_DEV_PM_OPS(name, suspend_fn, resume_fn) \
+const struct dev_pm_ops name = { \
+	.suspend = suspend_fn, \
+	.resume = resume_fn, \
+	.freeze = suspend_fn, \
+	.thaw = resume_fn, \
+	.poweroff = suspend_fn, \
+	.restore = resume_fn, \
+}
+#endif /* (LINUX_VERSION_CODE == KERNEL_VERSION(2,6,32)) */
 
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)) */
 
