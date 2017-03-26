@@ -1,3 +1,4 @@
+ccflags-y += -I$(src)
 obj-m += compat.o
 #compat-objs :=
 
@@ -45,7 +46,16 @@ compat-$(CONFIG_COMPAT_KERNEL_3_2) += compat-3.2.o
 compat-$(CONFIG_COMPAT_KERNEL_3_3) += \
 	compat-3.3.o
 compat-$(CONFIG_COMPAT_KERNEL_3_4) += compat-3.4.o
+compat-$(CONFIG_COMPAT_KERNEL_3_5) += \
+	compat-3.5.o \
+	dma-buf.o \
+	user_namespace.o
+compat-$(CONFIG_COMPAT_KERNEL_3_6) += compat-3.6.o
 compat-$(CONFIG_COMPAT_KERNEL_3_7) += compat-3.7.o
+compat-$(CONFIG_COMPAT_KERNEL_3_8) += compat-3.8.o
+compat-$(CONFIG_COMPAT_KERNEL_3_9) += \
+	hdmi.o \
+	compat-3.9.o
 
 compat-$(CONFIG_COMPAT_CORDIC) += cordic.o
 compat-$(CONFIG_COMPAT_CRC8) += crc8.o

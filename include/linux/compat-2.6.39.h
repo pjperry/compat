@@ -8,11 +8,23 @@
 #include <linux/tty.h>
 #include <linux/irq.h>
 #include <linux/kernel.h>
+#include <linux/err.h>
+
+static inline int __must_check PTR_RET(const void *ptr)
+{
+	if (IS_ERR(ptr))
+		return PTR_ERR(ptr);
+	else
+		return 0;
+}
+
+#define NETIF_F_RXCSUM 0
 
 #define tiocmget(tty) tiocmget(tty, NULL)
 #define tiocmset(tty, set, clear) tiocmset(tty, NULL, set, clear)
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
+#define tty_set_termios LINUX_BACKPORT(tty_set_termios)
 extern int tty_set_termios(struct tty_struct *tty, struct ktermios *kt);
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)) */
 
@@ -102,7 +114,7 @@ static inline struct msi_desc *irq_desc_get_msi_desc(struct irq_desc *desc)
  * version included in compat-drivers. We use strict_strtol to check if
  * kstrto* is already available.
  */
-#ifndef strict_strtol
+#ifndef strict_strtoull
 /* Internal, do not use. */
 int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
 int __must_check _kstrtol(const char *s, unsigned int base, long *res);

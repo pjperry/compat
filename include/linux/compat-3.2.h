@@ -7,6 +7,22 @@
 
 #include <linux/skbuff.h>
 #include <linux/dma-mapping.h>
+#include <linux/printk.h>
+
+/* backports 07613b0b */
+#if defined(CONFIG_DYNAMIC_DEBUG)
+#define DEFINE_DYNAMIC_DEBUG_METADATA(name, fmt)               \
+	static struct _ddebug __used __aligned(8)               \
+	__attribute__((section("__verbose"))) name = {          \
+		.modname = KBUILD_MODNAME,                      \
+		.function = __func__,                           \
+		.filename = __FILE__,                           \
+		.format = (fmt),                                \
+		.lineno = __LINE__,                             \
+		.flags =  _DPRINTK_FLAGS_DEFAULT,               \
+		.enabled = false,                               \
+	}
+#endif /* defined(CONFIG_DYNAMIC_DEBUG) */
 
 /* backports b4625dab */
 #define  SDIO_CCCR_REV_3_00    3       /* CCCR/FBR Version 3.00 */
@@ -86,6 +102,7 @@ static inline void *dma_zalloc_coherent(struct device *dev, size_t size,
 	return ret;
 }
 
+#define __netdev_printk LINUX_BACKPORT(__netdev_printk)
 extern int __netdev_printk(const char *level, const struct net_device *dev,
 			   struct va_format *vaf);
 

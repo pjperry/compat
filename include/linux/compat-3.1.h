@@ -11,6 +11,7 @@
 #include <linux/idr.h>
 #include <asm/div64.h>
 
+#define HID_TYPE_USBNONE 2
 
 /* This backports:
  *
@@ -42,19 +43,6 @@ static inline struct sk_buff *__netdev_alloc_skb_ip_align(struct net_device *dev
 	return skb;
 }
 
-/*
- * Getting something that works in C and CPP for an arg that may or may
- * not be defined is tricky.  Here, if we have "#define CONFIG_BOOGER 1"
- * we match on the placeholder define, insert the "0," for arg1 and generate
- * the triplet (0, 1, 0).  Then the last step cherry picks the 2nd arg (a one).
- * When CONFIG_BOOGER is not defined, we generate a (... 1, 0) pair, and when
- * the last step cherry picks the 2nd arg, we get a zero.
- */
-#define __ARG_PLACEHOLDER_1 0,
-#define config_enabled(cfg) _config_enabled(cfg)
-#define _config_enabled(value) __config_enabled(__ARG_PLACEHOLDER_##value)
-#define __config_enabled(arg1_or_junk) ___config_enabled(arg1_or_junk 1, 0)
-#define ___config_enabled(__ignored, val, ...) val
 #define genl_dump_check_consistent(cb, user_hdr, family)
 
 /*
@@ -100,21 +88,21 @@ static inline void security_sk_clone(const struct sock *sk, struct sock *newsk)
 #include <asm-generic/atomic64.h>
 #endif
 
-/* mask ida_simple_get as RHEL6 backports this */
-#define ida_simple_get(a,b,c,d) compat_ida_simple_get(a,b,c,d)
-
+#define ida_simple_get LINUX_BACKPORT(ida_simple_get)
 int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
 		   gfp_t gfp_mask);
 
-/* mask ida_simple_remove as RHEL6 backports this */
-#define ida_simple_remove(a,b) compat_ida_simple_remove(a,b)
-
+#define ida_simple_remove LINUX_BACKPORT(ida_simple_remove)
 void ida_simple_remove(struct ida *ida, unsigned int id);
 
-/* mask cpufreq_quick_get_max as RHEL6 backports this */
-#define cpufreq_quick_get_max(a) compat_cpufreq_quick_get_max(a)
-
+#ifdef CONFIG_CPU_FREQ
+#define cpufreq_quick_get_max LINUX_BACKPORT(cpufreq_quick_get_max)
 unsigned int cpufreq_quick_get_max(unsigned int cpu);
+#endif
+
+struct watchdog_device {
+};
+
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)) */
 
 #endif /* LINUX_3_1_COMPAT_H */
